@@ -14,9 +14,22 @@ migrate = Migrate(app, db)
 
 db.init_app(app)
 
-@app.route('/messages')
+@app.route('/messages', methods=['GET', 'POST'])
 def messages():
-    return ''
+
+    if request.method == 'GET':
+        messages = []
+        for message in Message.query.order_by(Message.created_at.asc()).all():
+            message_dict = message.to_dict()
+            messages.append(message_dict)
+    
+        response = make_response(
+            messages,
+            200
+        )
+
+        return response
+
 
 @app.route('/messages/<int:id>')
 def messages_by_id(id):
